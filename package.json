@@ -1,0 +1,13 @@
+{
+  "name": "ortalamav4",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "dependencies": {
+    "angular": "1.6.6",
+    "bulma": "0.6.0"
+  },
+  "devDependencies": {},
+  "author": "enesfarukmeniz@gmail.com",
+  "license": "MIT"
+}

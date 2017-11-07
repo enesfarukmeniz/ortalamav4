@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ortalama Hesaplama Şeysi v4.0</title>
+    <meta name="author" content="Enes Faruk Meniz <enesfarukmeniz@gmail.com>">
+    <link rel="stylesheet" href="node_modules/bulma/css/bulma.css">
+    <script src="node_modules/angular/angular.min.js"></script>
+    <script src="app.js"></script>
+</head>
+<body ng-app="ortalamav4">
+
+<div ng-controller="AppController">
+    <div class="container">
+        <div class="box">
+            <form>
+                <div class="field is-horizontal">
+                    <button class="button is-link is-small" ng-click="help=true">
+                        ?
+                    </button>
+
+                    <div class="field-body">
+                        <div class="field-label is-normal">
+                            <label class="label">Alınan Kredi</label>
+                        </div>
+                        <div class="field">
+                            <p class="control is-expanded">
+                                <input ng-model="lessonForm.oldCredit" class="input" type="number" placeholder="Alınan Kredi" step=".5"
+                                       ng-init="lessonForm.oldCredit = 0">
+                            </p>
+                        </div>
+                        <div class="field-label is-normal">
+                            <label class="label">Ortalama</label>
+                        </div>
+                        <div class="field">
+                            <p class="control is-expanded">
+                                <input ng-model="lessonForm.oldGPA" class="input" type="number" placeholder="Ortalama" step=".01" ng-init="lessonForm.oldGPA = 0">
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal has-addons has-addons-centered ">
+                    <button class="button is-info is-fullwidth" ng-click="addNew()">
+                        Yeni Ders Ekle
+                    </button>
+                </div>
+                <div class="contaier">
+                    <table class="table is-fullwidth">
+                        <thead>
+                        <tr>
+                            <th>Dersin Adı</th>
+                            <th>Not</th>
+                            <th>Kredi</th>
+                            <th>Tekrar?</th>
+                            <th style="width:14%">Eski Not</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat-start="lesson in lessons">
+                            <td>
+                                <div class="field">
+                                    <p class="control is-expanded">
+                                        <input class="input" type="text" placeholder="Dersin Adı" ng-model="lessonForm.lessons[lesson].lessonName">
+                                    </p>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="select">
+                                    <select ng-model="lessonForm.lessons[lesson].mark"
+                                            ng-init="lessonForm.lessons[lesson].mark = '4'"
+                                            ng-change="result()">
+                                        <option value="4">AA</option>
+                                        <option value="3.5">BA</option>
+                                        <option value="3">BB</option>
+                                        <option value="2.5">CB</option>
+                                        <option value="2">CC</option>
+                                        <option value="1.5">DC</option>
+                                        <option value="1">DD</option>
+                                        <option value="0">FF-VF</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="select">
+                                    <select ng-model="lessonForm.lessons[lesson].credit"
+                                            ng-init="lessonForm.lessons[lesson].credit = '3'"
+                                            ng-change="result()">
+                                        <option value="5">5</option>
+                                        <option value="4.5">4.5</option>
+                                        <option value="4">4</option>
+                                        <option value="3.5">3.5</option>
+                                        <option value="3">3</option>
+                                        <option value="2.5">2.5</option>
+                                        <option value="2">2</option>
+                                        <option value="1.5">1.5</option>
+                                        <option value="1">1</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <label class="checkbox">
+                                    <input type="checkbox" ng-model="lessonForm.lessons[lesson].old" ng-change="result()">
+                                </label>
+                            </td>
+                            <td>
+                                <div class="select" ng-show="lessonForm.lessons[lesson].old">
+                                    <select ng-model="lessonForm.lessons[lesson].oldMark"
+                                            ng-init="lessonForm.lessons[lesson].oldMark = '0'"
+                                            ng-change="result()">
+                                        <option value="4">AA</option>
+                                        <option value="3.5">BA</option>
+                                        <option value="3">BB</option>
+                                        <option value="2.5">CB</option>
+                                        <option value="2">CC</option>
+                                        <option value="1.5">DC</option>
+                                        <option value="1">DD</option>
+                                        <option value="0" selected>FF-VF</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <a class="button is-danger" ng-click="remove(lesson)">Kaldır</a>
+                            </td>
+                        </tr>
+                        <tr ng-repeat-end ng-if="false"></tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+            <div class="columns  is-centered" ng-hide="error">
+                <div class="column">
+                    <p class="notification has-text-centered" ng-class="{'is-success': currentGPA >= 2, 'is-warning': currentGPA < 2}">
+                        Dönem Ortalaması: {{currentGPA}}
+                    </p>
+                </div>
+                <div class="column">
+                    <p class="notification has-text-centered" ng-class="{'is-success': newGPA >= 2, 'is-warning': newGPA < 2}">
+                        Genel Ortalama: {{newGPA}}
+                    </p>
+                </div>
+            </div>
+            <div class="columns is-gapless is-centered" ng-show="error">
+                <div class="column">
+                    <p class="notification is-danger has-text-centered">Hatalı İşlem</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" ng-class="{'is-active':help}">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Yardım</p>
+                <button class="delete" aria-label="close" ng-click="help=false"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="content">
+                    <img src="transkript.png">
+                    <br><br>
+                    <dl>
+                        <dt>"Alınan Kredi" kısmına 'O.K.Krd.'de yazan krediyi girmeniz gerekmektedir</dt>
+                        <dt>"Ortalama" kısmına şu anki ortalamanızı girmeniz gerekmektedir</dt>
+                        <br>
+                        <dt>Herhangi bir soru/sorun/öneri durumunda:</dt>
+                        <dt><a href="mailto:enesfarukmeniz@gmail.com">enesfarukmeniz@gmail.com</a></dt>
+                        <dt><a href="https://github.com/enesfarukmeniz/ortalamav4" target="_blank">https://github.com/enesfarukmeniz/ortalamav4</a></dt>
+                    </dl>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button" ng-click="help=false">Kapat</button>
+            </footer>
+        </div>
+    </div>
+    <!-- awesome hack starts-->
+    {{result()}}
+    <!-- awesome hack ends -->
+</div>
+</body>
+</html>
