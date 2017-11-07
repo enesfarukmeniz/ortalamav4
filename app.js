@@ -21,9 +21,7 @@ angular.module('ortalamav4', [])
             $scope.result();
         };
 
-        var i = 0;
         $scope.result = function () {
-            console.log(i++)
             var totalCredit = $scope.lessonForm.oldCredit;
             var oldGPA = $scope.lessonForm.oldGPA;
             var totalPoint = totalCredit * oldGPA;
